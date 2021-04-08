@@ -109,24 +109,23 @@ public:
             auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
             console_sink->set_level(spdlog::level::debug);
             //consoleSink->set_pattern("[multi_sink_example] [%^%l%$] %v");
-            console_sink->set_pattern("[%m-%d %H:%M:%S.%e][%^%L%$][thread:%t]  %v");
+//            console_sink->set_pattern("[%Y-%m-%d %H:%M:%S.%e][%l][%s:%#] %v");
             sink_list.push_back(console_sink);
 
             // add file sink
             auto basic_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/basic_sink.log");
             basic_sink->set_level(spdlog::level::debug);
-            basic_sink->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%5l%$][thread:%t]  %v");
             sink_list.push_back(basic_sink);
 
             // add rotate file sink
             auto rotating = std::make_shared<spdlog::sinks::rotating_file_sink_mt>("logs/rotatingSink.log", 1024 * 1024,
                                                                                    5, false);
             rotating->set_level(spdlog::level::debug);
-            rotating->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%5l%$][thread:%t]  %v");
+//            rotating->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%5l%$][thread:%t]  %v");
             sink_list.push_back(rotating);
 
             // set async log
-            m_logger = std::make_shared<spdlog::async_logger>("both", begin(sink_list), end(sink_list),
+            m_logger = std::make_shared<spdlog::async_logger>("d", begin(sink_list), end(sink_list),
                                                               spdlog::thread_pool());
             //register it if you need to access it globally
             spdlog::register_logger(m_logger);
@@ -168,12 +167,12 @@ private:
 
 // use fmt lib, e.g. LOG_WARN("warn log, {1}, {1}, {2}", 1, 2);
 #define LOG_TRACE(msg,...) \
-{ if (wlog::logger::get().level() == spdlog::level::trace) \
-    spdlog::log({__FILE__, __LINE__, __FUNCTION__}, spdlog::level::trace, msg, ##__VA_ARGS__);  \
+{ if (rs::Logger::get_instance().get_logger()->level() == spdlog::level::trace) \
+    rs::Logger::get_instance().get_logger()->log({__FILE__, __LINE__, __FUNCTION__}, spdlog::level::trace, msg, ##__VA_ARGS__);  \
 };
 
 #define LOG_DEBUG(msg,...) rs::Logger::get_instance().get_logger()->log({__FILE__, __LINE__, __FUNCTION__}, spdlog::level::debug, msg, ##__VA_ARGS__)
-#define LOG_INFO(msg,...)  spdlog::log({__FILE__, __LINE__, __FUNCTION__}, spdlog::level::info, msg, ##__VA_ARGS__)
-#define LOG_WARN(msg,...)  spdlog::log({__FILE__, __LINE__, __FUNCTION__}, spdlog::level::warn, msg, ##__VA_ARGS__)
-#define LOG_ERROR(msg,...) spdlog::log({__FILE__, __LINE__, __FUNCTION__}, spdlog::level::err, msg, ##__VA_ARGS__)
-#define LOG_FATAL(msg,...) spdlog::log({__FILE__, __LINE__, __FUNCTION__}, spdlog::level::critical, msg, ##__VA_ARGS__)
+#define LOG_INFO(msg,...)  rs::Logger::get_instance().get_logger()->log({__FILE__, __LINE__, __FUNCTION__}, spdlog::level::info, msg, ##__VA_ARGS__)
+#define LOG_WARN(msg,...)  rs::Logger::get_instance().get_logger()->log({__FILE__, __LINE__, __FUNCTION__}, spdlog::level::warn, msg, ##__VA_ARGS__)
+#define LOG_ERROR(msg,...) rs::Logger::get_instance().get_logger()->log({__FILE__, __LINE__, __FUNCTION__}, spdlog::level::err, msg, ##__VA_ARGS__)
+#define LOG_FATAL(msg,...) rs::Logger::get_instance().get_logger()->log({__FILE__, __LINE__, __FUNCTION__}, spdlog::level::critical, msg, ##__VA_ARGS__)
