@@ -8,13 +8,6 @@
 
 #pragma once
 
-#ifdef _WIN32
-#include <io.h>
-#include <direct.h>
-#include <stdlib.h>
-#include <stdio.h>
-#endif
-
 #include <assert.h>
 
 #include <iostream>
@@ -50,7 +43,6 @@ enum class LoggerLevel {
 
 class Logger {
 public:
-
     static Logger &get_instance() {
         static Logger m_instance;
         return m_instance;
